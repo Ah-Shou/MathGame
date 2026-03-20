@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat \"D:\\\\MyTestProjects\\\\MathGame\"/*.txt)",
+      "Skill(update-config)",
+      "Bash(claude config:*)",
+      "Bash(/usr/bin/claude config:*)",
+      "Bash(claude.exe config:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}
