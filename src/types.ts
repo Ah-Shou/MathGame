@@ -1,5 +1,21 @@
 // Shared types for the math game
 
+export interface Achievement {
+  id: string;
+  name: string;
+  desc: string;
+  icon: string;
+  unlockedAt?: number; // timestamp
+}
+
+export interface ShopItem {
+  id: string;
+  name: string;
+  icon: string;
+  price: number;
+  category: 'hat' | 'pet' | 'skin';
+}
+
 export interface Player {
   id: string;
   nickname: string;
@@ -9,6 +25,14 @@ export interface Player {
   coins: number;
   unlockedIslands: string[];
   wrongAnswers: WrongAnswer[];
+  achievements: Record<string, number>; // id -> unlockedAt timestamp
+  ownedItems: string[];       // shop item ids
+  equippedHat: string;        // item id or ''
+  equippedPet: string;        // item id or ''
+  equippedSkin: string;       // item id or ''
+  totalCorrect: number;       // cumulative correct answers
+  currentCorrectStreak: number;
+  loginDates: string[];       // 'YYYY-MM-DD' strings, last 30 days
 }
 
 export interface WrongAnswer {
@@ -60,6 +84,7 @@ export interface BattleState {
   timeUsed: number; // ms used so far
   consecutiveWrong: number;
   difficulty: number; // 1-3, auto-adjusts
+  hadCombo: boolean;
 }
 
 export interface BattleResult {
@@ -70,9 +95,10 @@ export interface BattleResult {
   questionsTotal: number;
   newLevel?: number;
   newUnlocks?: string[];
+  newAchievements?: Achievement[];
 }
 
-export type ScreenName = 'home' | 'map' | 'battle';
+export type ScreenName = 'home' | 'map' | 'battle' | 'profile';
 
 export interface NavigateParams {
   islandId?: string;

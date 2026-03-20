@@ -19,14 +19,19 @@ export function navigate(screen: ScreenName, params?: NavigateParams): void {
     case 'battle':
       import('./screens/battle').then(m => m.mount(container, params));
       break;
+    case 'profile':
+      import('./screens/profile').then(m => m.mount(container));
+      break;
   }
 }
 
 // Boot
-import { loadPlayer } from './store';
+import { loadPlayer, touchLogin, evaluateAchievements } from './store';
 const player = loadPlayer();
 if (!player || !player.nickname) {
   navigate('home');
 } else {
+  touchLogin(player);
+  evaluateAchievements(player);
   navigate('map');
 }

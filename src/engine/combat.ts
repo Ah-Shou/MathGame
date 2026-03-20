@@ -42,6 +42,7 @@ export function createBattleState(islandId: string, playerLevel: number): Battle
     timeUsed: 0,
     consecutiveWrong: 0,
     difficulty: 1,
+    hadCombo: false,
   };
 }
 
@@ -53,6 +54,7 @@ export function processCorrectAnswer(state: BattleState): { damage: number; isCo
 
   const isCombo = state.combo > 0 && state.combo % 3 === 0;
   const damage = isCombo ? 2 : 1;
+  if (isCombo) state.hadCombo = true;
 
   state.monster.currentHp = Math.max(0, state.monster.currentHp - damage);
   state.score += isCombo ? 20 : 10;

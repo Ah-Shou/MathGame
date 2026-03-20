@@ -9,6 +9,18 @@
   transition: background 0.3s;
 }
 
+.battle-screen.skin-sunset {
+  background: linear-gradient(180deg, #fff6ea 0%, #ffe0bc 100%);
+}
+
+.battle-screen.skin-ocean {
+  background: linear-gradient(180deg, #eefaff 0%, #d8eeff 100%);
+}
+
+.battle-screen.skin-forest {
+  background: linear-gradient(180deg, #f5fff1 0%, #e0f1d2 100%);
+}
+
 /* Header */
 .battle-header {
   display: flex;
@@ -89,6 +101,32 @@
 .player-emoji {
   font-size: 2.5rem;
   line-height: 1;
+}
+
+.player-stage {
+  min-height: 3.4rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-hat,
+.player-pet {
+  position: absolute;
+  line-height: 1;
+}
+
+.player-hat {
+  top: -0.55rem;
+  right: -0.5rem;
+  font-size: 1.2rem;
+}
+
+.player-pet {
+  bottom: -0.35rem;
+  right: -1rem;
+  font-size: 1.15rem;
 }
 
 .monster-name, .player-name {
@@ -214,6 +252,18 @@
   gap: 8px;
 }
 
+.battle-screen.skin-sunset .numpad-btn:not(.numpad-confirm):not(.numpad-del) {
+  background: #fff1e2;
+}
+
+.battle-screen.skin-ocean .numpad-btn:not(.numpad-confirm):not(.numpad-del) {
+  background: #ecf8ff;
+}
+
+.battle-screen.skin-forest .numpad-btn:not(.numpad-confirm):not(.numpad-del) {
+  background: #eef8e5;
+}
+
 .numpad-btn {
   aspect-ratio: 1.4;
   font-size: 1.4rem;
@@ -296,6 +346,14 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.achievement-unlock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--color-border);
 }
 
 .stat-row {

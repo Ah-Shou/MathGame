@@ -1,0 +1,222 @@
+.profile-screen {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn-back {
+  align-self: flex-start;
+  background: none;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--color-text-light);
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-summary {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.profile-avatar-stage {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, #fff5dc, #dff3ff);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  font-size: 3rem;
+}
+
+.profile-hat,
+.profile-pet {
+  position: absolute;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.profile-hat {
+  top: -8px;
+  right: 6px;
+}
+
+.profile-pet {
+  bottom: -8px;
+  right: -4px;
+}
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.profile-meta,
+.section-head p {
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.profile-tags,
+.preview-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-tag {
+  background: #f5efe5;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-head h2 {
+  font-size: 1.1rem;
+}
+
+.achievement-grid,
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.achievement-card,
+.shop-card {
+  border: 2px solid var(--color-border);
+  border-radius: 18px;
+  padding: 14px 12px;
+  text-align: center;
+  background: #fffdf8;
+}
+
+.achievement-card.unlocked {
+  border-color: #ffcf5f;
+  background: linear-gradient(180deg, #fff8dd, #fff);
+}
+
+.achievement-card.locked {
+  opacity: 0.65;
+  filter: grayscale(0.2);
+}
+
+.achievement-icon,
+.shop-icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.achievement-name,
+.shop-name {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.achievement-desc,
+.achievement-status,
+.shop-price {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  line-height: 1.4;
+}
+
+.shop-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.shop-tab {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-family: var(--font);
+  font-weight: 700;
+  color: var(--color-text);
+  background: #efe7da;
+  cursor: pointer;
+}
+
+.shop-tab.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.shop-card.equipped {
+  border-color: var(--color-success);
+  background: linear-gradient(180deg, #eefbef, #fff);
+}
+
+.shop-action {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+}
+
+.shop-action:disabled {
+  opacity: 1;
+  cursor: default;
+  box-shadow: none;
+  background: var(--color-success);
+  color: #fff;
+}
+
+.shop-message {
+  min-height: 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+.shop-message.error {
+  color: var(--color-danger);
+}
+
+@media (max-width: 420px) {
+  .profile-summary {
+    align-items: flex-start;
+  }
+
+  .achievement-grid,
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+}

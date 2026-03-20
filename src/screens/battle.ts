@@ -1,6 +1,15 @@
 import '../styles/battle.css';
 import type { NavigateParams, BattleState } from '../types';
-import { loadPlayer, addXP, addCoins, addWrongAnswer } from '../store';
+import {
+  addCoins,
+  addWrongAnswer,
+  addXP,
+  evaluateAchievements,
+  getEquippedItem,
+  loadPlayer,
+  recordCorrectAnswer,
+  resetCorrectStreak,
+} from '../store';
 import { createBattleState, processCorrectAnswer, processWrongAnswer, processTimeout, isBattleOver, calculateResult } from '../engine/combat';
 import { generateQuestion } from '../engine/questions';
 import { playCorrect, playWrong, playCombo, playVictory, resumeAudio } from '../audio';
@@ -19,18 +28,29 @@ export function mount(container: HTMLElement, params?: NavigateParams): void {
   const islandId = params?.islandId ?? 'addition';
   const player = loadPlayer();
   if (!player) { navigate('home'); return; }
+  const hat = getEquippedItem(player, 'hat');
+  const pet = getEquippedItem(player, 'pet');
+  const skin = getEquippedItem(player, 'skin');
 
   const state: BattleState = createBattleState(islandId, player.level);
   state.currentQuestion = generateQuestion(islandId, state.difficulty);
 
-  renderBattle(container, state, player.avatar, player.nickname);
+  renderBattle(container, state, player.avatar, player.nickname, hat?.icon ?? '', pet?.icon ?? '', skin?.id ?? '');
   startTimer(container, state, islandId);
 }
 
-function renderBattle(container: HTMLElement, state: BattleState, playerAvatar: string, playerName: string): void {
+function renderBattle(
+  container: HTMLElement,
+  state: BattleState,
+  playerAvatar: string,
+  playerName: string,
+  hatIcon: string,
+  petIcon: string,
+  skinId: string,
+): void {
   const q = state.currentQuestion!;
   container.innerHTML = `
-    <div class="battle-screen" id="battleScreen">
+    <div class="battle-screen ${skinClassName(skinId)}" id="battleScreen">
       <div class="battle-header">
         <button class="btn-back" id="backBtn">← 退出</button>
         <div class="battle-score">得分: <span id="scoreVal">${state.score}</span></div>
@@ -55,7 +75,11 @@ function renderBattle(container: HTMLElement, state: BattleState, playerAvatar: 
         <div class="vs-badge">VS</div>
 
         <div class="player-side">
-          <div class="player-emoji">${playerAvatar}</div>
+          <div class="player-stage">
+            <div class="player-emoji">${playerAvatar}</div>
+            ${hatIcon ? `<div class="player-hat">${hatIcon}</div>` : ''}
+            ${petIcon ? `<div class="player-pet">${petIcon}</div>` : ''}
+          </div>
           <div class="player-name">${playerName}</div>
           <div class="hp-bar-wrap">
             <div class="hp-bar player-hp-bar">
@@ -151,6 +175,8 @@ function submitAnswer(container: HTMLElement, state: BattleState, islandId: stri
 
   if (answer === correct) {
     const { isCombo } = processCorrectAnswer(state);
+    const player = loadPlayer();
+    if (player) recordCorrectAnswer(player);
     if (isCombo) playCombo(); else playCorrect();
     flashScreen(container, 'success');
     animateMonster(container);
@@ -158,6 +184,7 @@ function submitAnswer(container: HTMLElement, state: BattleState, islandId: stri
   } else {
     const p = loadPlayer()!;
     addWrongAnswer(p, state.currentQuestion!.text, correct);
+    resetCorrectStreak(p);
     processWrongAnswer(state);
     playWrong();
     flashScreen(container, 'danger');
@@ -195,6 +222,11 @@ function startTimer(container: HTMLElement, state: BattleState, islandId: string
     if (state.timeLeft <= 0) {
       clearTimer();
       processTimeout(state);
+      const player = loadPlayer();
+      if (player) {
+        addWrongAnswer(player, state.currentQuestion!.text, state.currentQuestion!.answer);
+        resetCorrectStreak(player);
+      }
       playWrong();
       flashScreen(container, 'danger');
       shakeScreen(container);
@@ -318,9 +350,15 @@ function showResult(container: HTMLElement, state: BattleState): void {
   const result = calculateResult(state);
   const { player: updatedPlayer, newLevel, newUnlocks } = addXP(p, result.xpGained);
   addCoins(updatedPlayer, result.coinsGained);
+  const newAchievements = evaluateAchievements(updatedPlayer, {
+    battleWon: state.monster.currentHp <= 0,
+    hadCombo: state.hadCombo,
+    perfectBattle: state.playerHp >= state.playerMaxHp && state.monster.currentHp <= 0,
+  });
 
   result.newLevel = newLevel;
   result.newUnlocks = newUnlocks;
+  result.newAchievements = newAchievements;
 
   const starEmojis = ['⭐', '⭐', '⭐'];
   const screen = container.querySelector('#battleScreen') as HTMLElement;
@@ -337,6 +375,12 @@ function showResult(container: HTMLElement, state: BattleState): void {
         <div class="stat-row"><span>获得金币</span><span>+${result.coinsGained} 🪙</span></div>
         ${newLevel ? `<div class="stat-row level-up"><span>🎊 升级了！</span><span>Lv.${newLevel}</span></div>` : ''}
         ${newUnlocks?.length ? `<div class="stat-row unlock"><span>🔓 解锁新岛屿！</span><span>${newUnlocks.join(', ')}</span></div>` : ''}
+        ${newAchievements.length ? `<div class="achievement-unlock-list">${newAchievements.map((achievement) => `
+          <div class="stat-row unlock">
+            <span>${achievement.icon} ${achievement.name}</span>
+            <span>新成就</span>
+          </div>
+        `).join('')}</div>` : ''}
       </div>
       <div class="result-btns">
         <button class="btn btn-primary btn-lg" id="playAgainBtn">再来一次 🔄</button>
@@ -353,4 +397,9 @@ function showResult(container: HTMLElement, state: BattleState): void {
     clearTimer();
     navigate('map');
   });
+}
+
+function skinClassName(skinId: string): string {
+  if (!skinId) return 'skin-default';
+  return `skin-${skinId.replace(/^skin_/, '')}`;
 }
