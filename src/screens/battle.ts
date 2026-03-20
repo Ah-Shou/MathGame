@@ -81,7 +81,7 @@ function renderBattle(container: HTMLElement, state: BattleState, playerAvatar: 
       </div>
 
       <div class="question-card card" id="questionCard">
-        <div class="question-text" id="questionText">${q.text}</div>
+        <div class="question-text${q.text.length > 12 ? ' long' : ''}" id="questionText">${q.text}</div>
       </div>
 
       <div class="numpad" id="numpad">
@@ -253,7 +253,9 @@ function updateScore(container: HTMLElement, state: BattleState): void {
 function updateQuestion(container: HTMLElement, state: BattleState): void {
   const el = container.querySelector('#questionText');
   if (el) {
-    el.textContent = state.currentQuestion!.text;
+    const text = state.currentQuestion!.text;
+    el.textContent = text;
+    el.classList.toggle('long', text.length > 12);
     el.classList.remove('pop-in');
     void (el as HTMLElement).offsetWidth;
     el.classList.add('pop-in');

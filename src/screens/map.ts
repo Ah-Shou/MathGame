@@ -32,14 +32,13 @@ export function mount(container: HTMLElement): void {
       <div class="islands-grid">
         ${ISLANDS.map(island => {
           const unlocked = player.unlockedIslands.includes(island.id);
-          const comingSoon = ['division', 'geometry', 'logic'].includes(island.id);
           return `
             <div class="island-card${unlocked ? ' unlocked' : ' locked'}"
               data-island="${island.id}"
               style="--island-color: ${island.color}">
               <div class="island-emoji">${island.emoji}</div>
               <div class="island-name">${island.name}</div>
-              <div class="island-desc">${comingSoon ? '即将开放' : island.description}</div>
+              <div class="island-desc">${island.description}</div>
               ${!unlocked ? `<div class="island-lock">🔒 Lv.${island.requiredLevel}</div>` : ''}
               ${unlocked ? `<button class="btn btn-primary island-btn" data-island="${island.id}">出发！</button>` : ''}
             </div>

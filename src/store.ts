@@ -8,9 +8,9 @@ export const ISLANDS = [
   { id: 'addition', name: '加法海滩', emoji: '🏖️', type: 'addition' as const, requiredLevel: 1, color: '#FFB830', description: '10~100以内加法' },
   { id: 'subtraction', name: '减法森林', emoji: '🌲', type: 'subtraction' as const, requiredLevel: 2, color: '#6BCB77', description: '退位减法挑战' },
   { id: 'multiplication', name: '乘法峡谷', emoji: '⛰️', type: 'multiplication' as const, requiredLevel: 4, color: '#4A90D9', description: '乘法口诀大冒险' },
-  { id: 'division', name: '除法洞穴', emoji: '🕳️', type: 'division' as const, requiredLevel: 6, color: '#9B59B6', description: '即将开放' },
-  { id: 'geometry', name: '几何乐园', emoji: '🔷', type: 'geometry' as const, requiredLevel: 8, color: '#E74C3C', description: '即将开放' },
-  { id: 'logic', name: '逻辑迷宫', emoji: '🧩', type: 'logic' as const, requiredLevel: 10, color: '#1ABC9C', description: '即将开放' },
+  { id: 'division', name: '除法洞穴', emoji: '🕳️', type: 'division' as const, requiredLevel: 6, color: '#9B59B6', description: '表内除法大挑战' },
+  { id: 'geometry', name: '几何乐园', emoji: '🔷', type: 'geometry' as const, requiredLevel: 8, color: '#E74C3C', description: '周长与面积计算' },
+  { id: 'logic', name: '逻辑迷宫', emoji: '🧩', type: 'logic' as const, requiredLevel: 10, color: '#1ABC9C', description: '找规律填数字' },
 ];
 
 function defaultPlayer(): Player {

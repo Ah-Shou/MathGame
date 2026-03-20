@@ -10,6 +10,9 @@ export function createMonster(islandId: string, level: number): Monster {
     addition: { name: '沙滩螃蟹', emoji: '🦀' },
     subtraction: { name: '森林精灵', emoji: '🧝' },
     multiplication: { name: '峡谷巨龙', emoji: '🐉' },
+    division: { name: '洞穴蝙蝠', emoji: '🦇' },
+    geometry: { name: '几何魔方', emoji: '🎲' },
+    logic: { name: '迷宫幽灵', emoji: '👻' },
   };
   const m = monsters[islandId] ?? { name: '神秘怪物', emoji: '👾' };
   return {

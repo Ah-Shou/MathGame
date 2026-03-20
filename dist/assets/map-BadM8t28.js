@@ -1,4 +1,4 @@
-import{l as t,n as l,I as c}from"./index-DL5ioRz0.js";function o(i){var n;const s=t();if(!s){l("home");return}i.innerHTML=`
+import{l as n,n as d,I as c}from"./index-DvB6sfnS.js";function o(e){var l;const s=n();if(!s){d("home");return}e.innerHTML=`
     <div class="map-screen">
       <div class="map-header">
         <div class="player-info">
@@ -22,15 +22,15 @@ import{l as t,n as l,I as c}from"./index-DL5ioRz0.js";function o(i){var n;const 
       </div>
 
       <div class="islands-grid">
-        ${c.map(a=>{const e=s.unlockedIslands.includes(a.id),d=["division","geometry","logic"].includes(a.id);return`
-            <div class="island-card${e?" unlocked":" locked"}"
+        ${c.map(a=>{const i=s.unlockedIslands.includes(a.id);return`
+            <div class="island-card${i?" unlocked":" locked"}"
               data-island="${a.id}"
               style="--island-color: ${a.color}">
               <div class="island-emoji">${a.emoji}</div>
               <div class="island-name">${a.name}</div>
-              <div class="island-desc">${d?"即将开放":a.description}</div>
-              ${e?"":`<div class="island-lock">🔒 Lv.${a.requiredLevel}</div>`}
-              ${e?`<button class="btn btn-primary island-btn" data-island="${a.id}">出发！</button>`:""}
+              <div class="island-desc">${a.description}</div>
+              ${i?"":`<div class="island-lock">🔒 Lv.${a.requiredLevel}</div>`}
+              ${i?`<button class="btn btn-primary island-btn" data-island="${a.id}">出发！</button>`:""}
             </div>
           `}).join("")}
       </div>
@@ -39,4 +39,4 @@ import{l as t,n as l,I as c}from"./index-DL5ioRz0.js";function o(i){var n;const 
         <button class="btn btn-secondary" id="changePlayerBtn">换个角色</button>
       </div>
     </div>
-  `,i.querySelectorAll(".island-btn").forEach(a=>{a.addEventListener("click",e=>{const d=e.currentTarget.dataset.island;l("battle",{islandId:d})})}),(n=i.querySelector("#changePlayerBtn"))==null||n.addEventListener("click",()=>{l("home")})}function r(i){return i.xp%100}export{o as mount};
+  `,e.querySelectorAll(".island-btn").forEach(a=>{a.addEventListener("click",i=>{const t=i.currentTarget.dataset.island;d("battle",{islandId:t})})}),(l=e.querySelector("#changePlayerBtn"))==null||l.addEventListener("click",()=>{d("home")})}function r(e){return e.xp%100}export{o as mount};

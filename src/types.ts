@@ -39,7 +39,7 @@ export interface Question {
   text: string;
   answer: number;
   operands: [number, number];
-  operator: '+' | '-' | '×';
+  operator: '+' | '-' | '×' | '÷' | '?';
   difficulty: number; // 1-3
 }
 

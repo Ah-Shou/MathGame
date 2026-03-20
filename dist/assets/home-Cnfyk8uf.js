@@ -1,4 +1,4 @@
-import{l as i,s as f,c as u,n as v}from"./index-DL5ioRz0.js";const c=["🦊","🐼","🐸","🦁","🐯","🐨","🐻","🐰","🐮","🐷","🦄","🐙"];function g(e){const r=i(),d=(r==null?void 0:r.nickname)??"",n=(r==null?void 0:r.avatar)??c[0];e.innerHTML=`
+import{l as i,s as f,c as u,n as v}from"./index-DvB6sfnS.js";const c=["🦊","🐼","🐸","🦁","🐯","🐨","🐻","🐰","🐮","🐷","🦄","🐙"];function g(e){const r=i(),d=(r==null?void 0:r.nickname)??"",n=(r==null?void 0:r.avatar)??c[0];e.innerHTML=`
     <div class="home-screen">
       <div class="home-hero">
         <div class="home-title-emoji float">🌟</div>
