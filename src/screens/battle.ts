@@ -1,4 +1,5 @@
 import '../styles/battle.css';
+import { normalizeCharacterId, renderCharacter } from '../characters';
 import type { NavigateParams, BattleState } from '../types';
 import {
   addCoins,
@@ -35,7 +36,7 @@ export function mount(container: HTMLElement, params?: NavigateParams): void {
   const state: BattleState = createBattleState(islandId, player.level);
   state.currentQuestion = generateQuestion(islandId, state.difficulty);
 
-  renderBattle(container, state, player.avatar, player.nickname, hat?.icon ?? '', pet?.icon ?? '', skin?.id ?? '');
+  renderBattle(container, state, player.avatar, player.nickname, hat?.icon ?? '', hat?.id ?? '', pet?.icon ?? '', skin?.id ?? '');
   startTimer(container, state, islandId);
 }
 
@@ -45,6 +46,7 @@ function renderBattle(
   playerAvatar: string,
   playerName: string,
   hatIcon: string,
+  hatId: string,
   petIcon: string,
   skinId: string,
 ): void {
@@ -60,63 +62,79 @@ function renderBattle(
       </div>
 
       <div class="battle-arena">
-        <div class="monster-side">
-          <div class="monster-emoji" id="monsterEmoji">${state.monster.emoji}</div>
-          <div class="monster-name">${state.monster.name}</div>
-          <div class="hp-bar-wrap">
+        <div class="arena-backdrop">
+          <div class="arena-glow arena-glow-left"></div>
+          <div class="arena-glow arena-glow-right"></div>
+        </div>
+        <div class="battle-fx-layer" id="battleFxLayer"></div>
+
+        <div class="fighter-card monster-card">
+          <div class="fighter-flash" id="monsterFlash"></div>
+          <div class="fighter-badge">怪物</div>
+          <div class="hp-bar-wrap fighter-hp-wrap">
             <div class="hp-bar monster-hp-bar">
               <div class="hp-fill monster-hp-fill" id="monsterHpFill"
                 style="width:${(state.monster.currentHp / state.monster.maxHp) * 100}%"></div>
             </div>
             <span class="hp-text" id="monsterHpText">${state.monster.currentHp}/${state.monster.maxHp}</span>
           </div>
+          <div class="monster-side" id="monsterCard">
+            <div class="monster-emoji" id="monsterEmoji">${state.monster.emoji}</div>
+            <div class="monster-name">${state.monster.name}</div>
+          </div>
         </div>
 
         <div class="vs-badge">VS</div>
 
-        <div class="player-side">
-          <div class="player-stage">
-            <div class="player-emoji">${playerAvatar}</div>
-            ${hatIcon ? `<div class="player-hat">${hatIcon}</div>` : ''}
-            ${petIcon ? `<div class="player-pet">${petIcon}</div>` : ''}
-          </div>
-          <div class="player-name">${playerName}</div>
-          <div class="hp-bar-wrap">
+        <div class="fighter-card player-card">
+          <div class="fighter-flash" id="playerFlash"></div>
+          <div class="fighter-badge">勇者</div>
+          <div class="hp-bar-wrap fighter-hp-wrap">
             <div class="hp-bar player-hp-bar">
               <div class="hp-fill player-hp-fill" id="playerHpFill"
                 style="width:${(state.playerHp / state.playerMaxHp) * 100}%"></div>
             </div>
             <span class="hp-text" id="playerHpText">${state.playerHp}/${state.playerMaxHp}</span>
           </div>
+          <div class="player-side" id="playerCard">
+            <div class="player-stage">
+              ${renderCharacter(playerAvatar, { size: 'xl', mood: 'attack', hatIcon, hatId, petIcon })}
+            </div>
+            <div class="player-name">${playerName}</div>
+          </div>
         </div>
       </div>
 
-      <div class="timer-wrap">
-        <div class="timer-ring">
-          <svg viewBox="0 0 44 44" class="timer-svg">
-            <circle cx="22" cy="22" r="18" fill="none" stroke="#e8e0d5" stroke-width="4"/>
-            <circle cx="22" cy="22" r="18" fill="none" stroke="var(--color-primary)" stroke-width="4"
-              stroke-dasharray="113" stroke-dashoffset="0" id="timerCircle"
-              stroke-linecap="round" transform="rotate(-90 22 22)"/>
-          </svg>
-          <span class="timer-text" id="timerText">10</span>
+      <div class="battle-panel">
+        <div class="question-topbar">
+          <div class="progress-text" id="progressText">第 ${state.questionsAnswered + 1} / 10 题</div>
+          <div class="timer-wrap">
+            <div class="timer-ring">
+              <svg viewBox="0 0 44 44" class="timer-svg">
+                <circle cx="22" cy="22" r="18" fill="none" stroke="#e8e0d5" stroke-width="4"/>
+                <circle cx="22" cy="22" r="18" fill="none" stroke="var(--color-primary)" stroke-width="4"
+                  stroke-dasharray="113" stroke-dashoffset="0" id="timerCircle"
+                  stroke-linecap="round" transform="rotate(-90 22 22)"/>
+              </svg>
+              <span class="timer-text" id="timerText">10</span>
+            </div>
+          </div>
         </div>
-        <div class="progress-text" id="progressText">第 ${state.questionsAnswered + 1} / 10 题</div>
-      </div>
 
-      <div class="question-card card" id="questionCard">
-        <div class="question-text${q.text.length > 12 ? ' long' : ''}" id="questionText">${q.text}</div>
-      </div>
+        <div class="question-card card" id="questionCard">
+          <div class="question-text${q.text.length > 12 ? ' long' : ''}" id="questionText">${q.text}</div>
+        </div>
 
-      <div class="numpad" id="numpad">
-        ${[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k => `
-          <button class="numpad-btn${k === '✓' ? ' numpad-confirm' : k === '⌫' ? ' numpad-del' : ''}"
-            data-key="${k}" type="button">${k}</button>
-        `).join('')}
-      </div>
+        <div class="answer-display">
+          <span id="answerDisplay">_</span>
+        </div>
 
-      <div class="answer-display">
-        <span id="answerDisplay">_</span>
+        <div class="numpad" id="numpad">
+          ${[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k => `
+            <button class="numpad-btn${k === '✓' ? ' numpad-confirm' : k === '⌫' ? ' numpad-del' : ''}"
+              data-key="${k}" type="button">${k}</button>
+          `).join('')}
+        </div>
       </div>
     </div>
   `;
@@ -179,6 +197,7 @@ function submitAnswer(container: HTMLElement, state: BattleState, islandId: stri
     if (player) recordCorrectAnswer(player);
     if (isCombo) playCombo(); else playCorrect();
     flashScreen(container, 'success');
+    triggerCharacterEffect(container, normalizeCharacterId(loadPlayer()?.avatar ?? 'fox'), 'attack');
     animateMonster(container);
     if (isCombo) showComboEffect(container, state.combo);
   } else {
@@ -189,6 +208,8 @@ function submitAnswer(container: HTMLElement, state: BattleState, islandId: stri
     playWrong();
     flashScreen(container, 'danger');
     shakeScreen(container);
+    triggerCharacterEffect(container, normalizeCharacterId(p.avatar), 'hurt');
+    animatePlayerHit(container);
   }
 
   currentAnswer = '';
@@ -230,6 +251,8 @@ function startTimer(container: HTMLElement, state: BattleState, islandId: string
       playWrong();
       flashScreen(container, 'danger');
       shakeScreen(container);
+      triggerCharacterEffect(container, normalizeCharacterId(player?.avatar ?? 'fox'), 'hurt');
+      animatePlayerHit(container);
       updateHpBars(container, state);
       currentAnswer = '';
       updateAnswerDisplay(container);
@@ -320,11 +343,32 @@ function shakeScreen(container: HTMLElement): void {
 
 function animateMonster(container: HTMLElement): void {
   const el = container.querySelector('#monsterEmoji') as HTMLElement | null;
+  const card = container.querySelector('#monsterCard') as HTMLElement | null;
+  const flash = container.querySelector('#monsterFlash') as HTMLElement | null;
   if (!el) return;
   el.classList.remove('monster-hit');
+  card?.classList.remove('fighter-hit');
+  flash?.classList.remove('active');
   void el.offsetWidth;
   el.classList.add('monster-hit');
+  card?.classList.add('fighter-hit');
+  flash?.classList.add('active');
   setTimeout(() => el.classList.remove('monster-hit'), 400);
+  setTimeout(() => card?.classList.remove('fighter-hit'), 420);
+  setTimeout(() => flash?.classList.remove('active'), 220);
+}
+
+function animatePlayerHit(container: HTMLElement): void {
+  const card = container.querySelector('#playerCard') as HTMLElement | null;
+  const flash = container.querySelector('#playerFlash') as HTMLElement | null;
+  if (!card) return;
+  card.classList.remove('fighter-hit');
+  flash?.classList.remove('active');
+  void card.offsetWidth;
+  card.classList.add('fighter-hit');
+  flash?.classList.add('active');
+  setTimeout(() => card.classList.remove('fighter-hit'), 420);
+  setTimeout(() => flash?.classList.remove('active'), 220);
 }
 
 function showComboEffect(container: HTMLElement, combo: number): void {
@@ -333,6 +377,38 @@ function showComboEffect(container: HTMLElement, combo: number): void {
   el.textContent = `🔥 ${combo}连击！`;
   container.querySelector('#battleScreen')?.appendChild(el);
   setTimeout(() => el.remove(), 1000);
+}
+
+function triggerCharacterEffect(
+  container: HTMLElement,
+  characterId: ReturnType<typeof normalizeCharacterId>,
+  type: 'attack' | 'hurt',
+): void {
+  const layer = container.querySelector('#battleFxLayer');
+  if (!layer) return;
+
+  const effect = document.createElement('div');
+  effect.className = `battle-fx battle-fx-${type} battle-fx-${characterId}`;
+
+  if (type === 'attack') {
+    effect.innerHTML = `
+      <div class="fx-core"></div>
+      <div class="fx-trail"></div>
+      <div class="fx-spark fx-spark-1"></div>
+      <div class="fx-spark fx-spark-2"></div>
+      <div class="fx-spark fx-spark-3"></div>
+    `;
+  } else {
+    effect.innerHTML = `
+      <div class="fx-wave"></div>
+      <div class="fx-shard fx-shard-1"></div>
+      <div class="fx-shard fx-shard-2"></div>
+      <div class="fx-shard fx-shard-3"></div>
+    `;
+  }
+
+  layer.appendChild(effect);
+  setTimeout(() => effect.remove(), type === 'attack' ? 820 : 760);
 }
 
 function setupBackBtn(container: HTMLElement): void {
@@ -345,6 +421,13 @@ function setupBackBtn(container: HTMLElement): void {
 function showResult(container: HTMLElement, state: BattleState): void {
   clearTimer();
   playVictory();
+
+  const screen = container.querySelector('#battleScreen') as HTMLElement;
+  screen.classList.add(state.monster.currentHp <= 0 ? 'battle-finish-win' : 'battle-finish-lose');
+  setTimeout(() => renderResult(container, state), 480);
+}
+
+function renderResult(container: HTMLElement, state: BattleState): void {
 
   const p = loadPlayer()!;
   const result = calculateResult(state);

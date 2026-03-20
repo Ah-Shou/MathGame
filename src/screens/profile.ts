@@ -1,4 +1,5 @@
 import '../styles/profile.css';
+import { getCharacter, renderCharacter } from '../characters';
 import { navigate } from '../main';
 import {
   ACHIEVEMENTS,
@@ -30,6 +31,7 @@ export function mount(container: HTMLElement): void {
   const hat = getEquippedItem(player, 'hat');
   const pet = getEquippedItem(player, 'pet');
   const skin = getEquippedItem(player, 'skin');
+  const character = getCharacter(player.avatar);
 
   container.innerHTML = `
     <div class="profile-screen">
@@ -37,12 +39,11 @@ export function mount(container: HTMLElement): void {
         <button class="btn-back" id="backBtn">← 返回地图</button>
         <div class="profile-summary card">
           <div class="profile-avatar-stage">
-            <span class="profile-avatar">${player.avatar}</span>
-            ${hat ? `<span class="profile-hat">${hat.icon}</span>` : ''}
-            ${pet ? `<span class="profile-pet">${pet.icon}</span>` : ''}
+            ${renderCharacter(player.avatar, { size: 'lg', mood: 'shop', hatIcon: hat?.icon ?? '', hatId: hat?.id ?? '', petIcon: pet?.icon ?? '' })}
           </div>
           <div class="profile-main">
             <div class="profile-name">${player.nickname}</div>
+            <div class="profile-role">${character.name} · ${character.title}</div>
             <div class="profile-meta">Lv.${player.level} · ${player.coins} 🪙</div>
             <div class="profile-tags">
               <span class="profile-tag">连续登录 ${getLoginStreak(player)} 天</span>
@@ -104,6 +105,15 @@ export function mount(container: HTMLElement): void {
 
             return `
               <div class="shop-card${equipped ? ' equipped' : ''}">
+                <div class="shop-preview">
+                  ${renderCharacter(player.avatar, {
+                    size: 'md',
+                    mood: activeCategory === 'pet' ? 'win' : 'shop',
+                    hatIcon: item.category === 'hat' ? item.icon : hat?.icon ?? '',
+                    hatId: item.category === 'hat' ? item.id : hat?.id ?? '',
+                    petIcon: item.category === 'pet' ? item.icon : pet?.icon ?? '',
+                  })}
+                </div>
                 <div class="shop-icon">${item.icon}</div>
                 <div class="shop-name">${item.name}</div>
                 <div class="shop-price">${item.price} 🪙</div>

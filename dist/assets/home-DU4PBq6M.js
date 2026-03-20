@@ -1,16 +1,4 @@
-import { getCharacter, getCharacterOptions, renderCharacter } from '../characters';
-import { createPlayer, loadPlayer, savePlayer } from '../store';
-import { navigate } from '../main';
-
-const CHARACTERS = getCharacterOptions();
-
-export function mount(container: HTMLElement): void {
-  const existing = loadPlayer();
-  const defaultNickname = existing?.nickname ?? '';
-  const defaultAvatar = existing?.avatar ?? CHARACTERS[0].id;
-  const preview = getCharacter(defaultAvatar);
-
-  container.innerHTML = `
+import{l as f,g as h,r as n,s as y,c as w,n as k,a as S}from"./index-BQ5kTxv9.js";const g=S();function C(e){const r=f(),u=(r==null?void 0:r.nickname)??"",o=(r==null?void 0:r.avatar)??g[0].id,l=h(o);e.innerHTML=`
     <div class="home-screen">
       <div class="home-hero">
         <div class="home-title-emoji float">🌟</div>
@@ -23,20 +11,20 @@ export function mount(container: HTMLElement): void {
           <label class="form-label">选择你的动物伙伴</label>
           <div class="hero-preview card">
             <div class="hero-preview-stage" id="heroPreviewStage">
-              ${renderCharacter(defaultAvatar, { size: 'lg', mood: 'shop' })}
+              ${n(o,{size:"lg",mood:"shop"})}
             </div>
             <div class="hero-preview-meta">
-              <div class="hero-preview-name" id="heroPreviewName">${preview.name}</div>
-              <div class="hero-preview-desc" id="heroPreviewDesc">${preview.title}</div>
+              <div class="hero-preview-name" id="heroPreviewName">${l.name}</div>
+              <div class="hero-preview-desc" id="heroPreviewDesc">${l.title}</div>
             </div>
           </div>
           <div class="avatar-grid" id="avatarGrid">
-            ${CHARACTERS.map(character => `
-              <button class="avatar-btn${character.id === defaultAvatar ? ' selected' : ''}" data-avatar="${character.id}" type="button">
-                <div class="avatar-mini">${renderCharacter(character.id, { size: 'sm', mood: 'idle', showPet: false })}</div>
-                <div class="avatar-name">${character.name}</div>
+            ${g.map(t=>`
+              <button class="avatar-btn${t.id===o?" selected":""}" data-avatar="${t.id}" type="button">
+                <div class="avatar-mini">${n(t.id,{size:"sm",mood:"idle",showPet:!1})}</div>
+                <div class="avatar-name">${t.name}</div>
               </button>
-            `).join('')}
+            `).join("")}
           </div>
         </div>
 
@@ -48,7 +36,7 @@ export function mount(container: HTMLElement): void {
             type="text"
             placeholder="输入昵称（2-8个字）"
             maxlength="8"
-            value="${defaultNickname}"
+            value="${u}"
           />
         </div>
 
@@ -57,59 +45,7 @@ export function mount(container: HTMLElement): void {
         </button>
       </div>
     </div>
-  `;
-
-  // Inject home styles
-  injectStyles();
-
-  let selectedAvatar = defaultAvatar;
-
-  const grid = container.querySelector('#avatarGrid')!;
-  grid.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest('.avatar-btn') as HTMLButtonElement | null;
-    if (!btn) return;
-    selectedAvatar = btn.dataset['avatar']!;
-    grid.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    const selected = getCharacter(selectedAvatar);
-    const stage = container.querySelector('#heroPreviewStage');
-    const name = container.querySelector('#heroPreviewName');
-    const desc = container.querySelector('#heroPreviewDesc');
-    if (stage) stage.innerHTML = renderCharacter(selectedAvatar, { size: 'lg', mood: 'shop' });
-    if (name) name.textContent = selected.name;
-    if (desc) desc.textContent = selected.title;
-  });
-
-  const startBtn = container.querySelector('#startBtn') as HTMLButtonElement;
-  const nicknameInput = container.querySelector('#nicknameInput') as HTMLInputElement;
-
-  startBtn.addEventListener('click', () => {
-    const nickname = nicknameInput.value.trim();
-    if (nickname.length < 2) {
-      nicknameInput.classList.add('shake');
-      nicknameInput.focus();
-      setTimeout(() => nicknameInput.classList.remove('shake'), 400);
-      return;
-    }
-
-    const existing = loadPlayer();
-    if (existing) {
-      existing.nickname = nickname;
-      existing.avatar = selectedAvatar;
-      savePlayer(existing);
-    } else {
-      createPlayer(nickname, selectedAvatar);
-    }
-
-    navigate('map');
-  });
-}
-
-function injectStyles(): void {
-  if (document.getElementById('home-styles')) return;
-  const style = document.createElement('style');
-  style.id = 'home-styles';
-  style.textContent = `
+  `,z();let i=o;const c=e.querySelector("#avatarGrid");c.addEventListener("click",t=>{const a=t.target.closest(".avatar-btn");if(!a)return;i=a.dataset.avatar,c.querySelectorAll(".avatar-btn").forEach(b=>b.classList.remove("selected")),a.classList.add("selected");const d=h(i),m=e.querySelector("#heroPreviewStage"),p=e.querySelector("#heroPreviewName"),v=e.querySelector("#heroPreviewDesc");m&&(m.innerHTML=n(i,{size:"lg",mood:"shop"})),p&&(p.textContent=d.name),v&&(v.textContent=d.title)});const x=e.querySelector("#startBtn"),s=e.querySelector("#nicknameInput");x.addEventListener("click",()=>{const t=s.value.trim();if(t.length<2){s.classList.add("shake"),s.focus(),setTimeout(()=>s.classList.remove("shake"),400);return}const a=f();a?(a.nickname=t,a.avatar=i,y(a)):w(t,i),k("map")})}function z(){if(document.getElementById("home-styles"))return;const e=document.createElement("style");e.id="home-styles",e.textContent=`
     .home-screen {
       padding: 32px 20px;
       display: flex;
@@ -220,6 +156,4 @@ function injectStyles(): void {
       width: 100%;
       margin-top: 4px;
     }
-  `;
-  document.head.appendChild(style);
-}
+  `,document.head.appendChild(e)}export{C as mount};

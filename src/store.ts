@@ -1,4 +1,5 @@
 import type { Player, WrongAnswer, Achievement, ShopItem } from './types';
+import { normalizeCharacterId } from './characters';
 
 const STORAGE_KEY = 'mathgame_player';
 const XP_PER_LEVEL = 100;
@@ -44,7 +45,7 @@ function createDefaultPlayer(): Player {
   return {
     id: crypto.randomUUID(),
     nickname: '',
-    avatar: '🦊',
+    avatar: 'fox',
     level: 1,
     xp: 0,
     coins: 0,
@@ -68,6 +69,7 @@ function normalizePlayer(raw: unknown): Player {
   return {
     ...base,
     ...candidate,
+    avatar: normalizeCharacterId(typeof candidate.avatar === 'string' ? candidate.avatar : base.avatar),
     unlockedIslands: Array.isArray(candidate.unlockedIslands) && candidate.unlockedIslands.length
       ? [...new Set(candidate.unlockedIslands)]
       : base.unlockedIslands,
@@ -127,7 +129,7 @@ export function savePlayer(player: Player): void {
 export function createPlayer(nickname: string, avatar: string): Player {
   const player = createDefaultPlayer();
   player.nickname = nickname;
-  player.avatar = avatar;
+  player.avatar = normalizeCharacterId(avatar);
   touchLogin(player);
   savePlayer(player);
   return player;

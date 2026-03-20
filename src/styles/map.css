@@ -25,37 +25,15 @@
 
 .player-avatar-stage {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 92px;
+  height: 84px;
   border-radius: 16px;
   background: linear-gradient(180deg, #fff4d5, #f2f7ff);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.player-avatar-badge {
-  font-size: 2.4rem;
-  line-height: 1;
-}
-
-.player-hat-badge,
-.player-pet-badge {
-  position: absolute;
-  line-height: 1;
-}
-
-.player-hat-badge {
-  font-size: 1rem;
-  top: -6px;
-  right: -2px;
-}
-
-.player-pet-badge {
-  font-size: 1rem;
-  bottom: -6px;
-  right: -2px;
+  overflow: hidden;
 }
 
 .player-details {
