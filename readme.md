@@ -1,120 +1,88 @@
- 小小数学探险家 - 实现计划                                               │
-│                                                                         │
-│ Context                                                                 │
-│                                                                         │
-│ 从零开始构建一个面向6-12岁小学生的网页数学游戏，基于                    │
-│ D:\MyTestProjects\MathGame\设计模型方案.txt 的设计文档。                │
-│ 用户选择本地开发服务器预览（npm run dev → localhost:5173）。            │
-│                                                                         │
-│ 技术栈                                                                  │
-│                                                                         │
-│ - Vite + TypeScript（vanilla，不用 Phaser.js）                          │
-│ - CSS animations 替代游戏引擎                                           │
-│ - Web Audio API 做音效                                                  │
-│ - localStorage 存储进度                                                 │
-│                                                                         │
-│ 项目结构（13个源文件）                                                  │
-│                                                                         │
-│ MathGame/                                                               │
-│ ├── index.html                                                          │
-│ ├── package.json                                                        │
-│ ├── tsconfig.json                                                       │
-│ ├── vite.config.ts                                                      │
-│ ├── src/                                                                │
-│ │   ├── main.ts              # 屏幕路由器                               │
-│ │   ├── types.ts             # 所有共享类型                             │
-│ │   ├── store.ts             # localStorage 封装                        │
-│ │   ├── audio.ts             # Web Audio 音效                           │
-│ │   ├── screens/                                                        │
-│ │   │   ├── home.ts          # 头像+昵称选择                            │
-│ │   │   ├── map.ts           # 世界地图                                 │
-│ │   │   └── battle.ts        # 核心战斗循环                             │
-│ │   ├── engine/                                                         │
-│ │   │   ├── questions.ts     # 题目生成+难度调整                        │
-│ │   │   └── combat.ts        # HP/连击/星级逻辑                         │
-│ │   └── styles/                                                         │
-│ │       ├── main.css         # CSS变量+全局样式                         │
-│ │       ├── map.css                                                     │
-│ │       └── battle.css                                                  │
-│ └── public/                                                             │
-│                                                                         │
-│ MVP 范围（3个岛屿，其余显示"即将开放"）                                 │
-│                                                                         │
-│ - 加法海滩（始终解锁）                                                  │
-│ - 减法森林（2级解锁）                                                   │
-│ - 乘法峡谷（4级解锁）                                                   │
-│ - 除法洞穴（Lv6）：表内除法，dividend ÷ divisor = ?，难度1-3对应不同数值范围，怪物是洞穴蝙蝠🦇
-  - 几何乐园（Lv8）：正方形/长方形的周长和面积计算，难度递进（周长→面积→大数），怪物是几何魔方🎲
-  - 逻辑迷宫（Lv10）：等差数列找规律填空（如 2, 4, ?, 8, 10），怪物是迷宫幽灵👻                                             │
-│                                                                         │
-│ 实现顺序                                                                │
-│                                                                         │
-│ Phase 1 - 基础设施                                                      │
-│                                                                         │
-│ 1. 运行 npm create vite@latest . -- --template vanilla-ts && npm        │
-│ install                                                                 │
-│ 2. src/types.ts - Player, Question, BattleState, Monster 等接口         │
-│ 3. src/store.ts - localStorage 读写，默认玩家状态                       │
-│ 4. src/styles/main.css - CSS变量（暖黄+清爽蓝），Quicksand字体          │
-│ 5. index.html - 引入 Google Fonts Quicksand                             │
-│ 6. src/main.ts - 屏幕路由（navigate函数）                               │
-│                                                                         │
-│ Phase 2 - 首页                                                          │
-│                                                                         │
-│ 7. src/screens/home.ts - 头像选择（emoji卡片）+ 昵称输入                │
-│                                                                         │
-│ Phase 3 - 战斗核心（最重要）                                            │
-│                                                                         │
-│ 8. src/engine/questions.ts - 加减乘法题目生成器                         │
-│ 9. src/engine/combat.ts - HP计算、连击、星级评定                        │
-│ 10. src/audio.ts - 答对/答错音效（Web Audio API）                       │
-│ 11. src/screens/battle.ts - 战斗循环（计时器用setInterval）             │
-│ 12. src/styles/battle.css - HP条、倒计时环、shake/flash动画             │
-│                                                                         │
-│ Phase 4 - 地图+进度                                                     │
-│                                                                         │
-│ 13. src/screens/map.ts - 岛屿网格，锁定状态                             │
-│ 14. src/styles/map.css                                                  │
-│ 15. 战斗结束后的XP/金币/解锁逻辑                                        │
-│                                                                         │
-│ 关键设计决策                                                            │
-│                                                                         │
-│ 屏幕路由                                                                │
-│                                                                         │
-│ 每个 screen 模块导出 mount(container: HTMLElement, params?)             │
-│ 函数，路由器替换 innerHTML。                                            │
-│                                                                         │
-│ 战斗计时器                                                              │
-│                                                                         │
-│ 用 setInterval 每100ms更新，存储 interval ID 以便清除。                 │
-│                                                                         │
-│ CSS动画（无canvas）                                                     │
-│                                                                         │
-│ - shake: translateX 左右抖动（答错时）                                  │
-│ - flash: 黄色背景闪烁（答对时）                                         │
-│ - HP条: transition: width 0.4s ease-out                                 │
-│                                                                         │
-│ 音效                                                                    │
-│                                                                         │
-│ AudioContext 懒加载（首次点击时创建），避免浏览器自动播放限制。         │
-│                                                                         │
-│ 星级计算                                                                │
-│                                                                         │
-│ - 3星：满血 + 用时 < 60% 总时限                                         │
-│ - 2星：剩余HP ≥ 2                                                       │
-│ - 1星：其余情况                                                         │
-│                                                                         │
-│ CSS 设计变量                                                            │
-│                                                                         │
-│ --color-primary: #FFB830    /* 暖黄 */                                  │
-│ --color-secondary: #4A90D9  /* 清爽蓝 */                                │
-│ --color-bg: #FFF9F0                                                     │
-│ --color-danger: #FF6B6B                                                 │
-│ --color-success: #6BCB77                                                │
-│ max-width: 480px，移动端友好。                                          │
-│                                                                         │
-│ 验证方式                                                                │
-│                                                                         │
-│ 1. 在 D:\MyTestProjects\MathGame 运行 npm run dev                       │
-│ 2. 浏览器访问 http://localhost:5173                                     │
-│ 3. 测试流程：创建角色 → 选择加法海滩 → 完成一场战斗 → 查看星级评定 
+# 小小数学探险家
+
+一款面向 6-12 岁小学生的网页数学闯关游戏。通过"地图探险 + 怪物战斗"的方式，让孩子在游戏中巩固加减乘除、几何和逻辑等数学知识。
+
+## 快速开始
+
+```bash
+npm install
+npm run dev
+```
+
+浏览器访问 `http://localhost:5173`，创建角色后即可开始游戏。
+
+## 玩法说明
+
+1. **创建角色** — 选择 emoji 头像，输入昵称
+2. **选择岛屿** — 在世界地图选择已解锁的岛屿
+3. **答题战斗** — 每场 10 道题，答对攻击怪物，答错被怪物反击
+4. **获得奖励** — 战斗结束获得 XP 和金币，升级解锁新岛屿
+
+### 战斗机制
+
+- 每题限时 **10 秒**，超时视为答错
+- 连续答对 3 题触发 **🔥 连击**，造成双倍伤害
+- 连续答错 3 次自动**降低难度**，帮助孩子找回信心
+- 战斗结束按表现评定 **1-3 星**
+
+| 评级 | 条件 |
+|------|------|
+| ⭐⭐⭐ | 满血通关 + 用时不超过总时限的 60% |
+| ⭐⭐ | 剩余 HP ≥ 2 |
+| ⭐ | 其余情况 |
+
+## 岛屿一览
+
+| 岛屿 | 解锁等级 | 内容 |
+|------|----------|------|
+| 🏖️ 加法海滩 | Lv.1 | 10~100 以内加法 |
+| 🌲 减法森林 | Lv.2 | 退位减法挑战 |
+| ⛰️ 乘法峡谷 | Lv.4 | 乘法口诀大冒险 |
+| 🕳️ 除法洞穴 | Lv.6 | 表内除法大挑战 |
+| 🔷 几何乐园 | Lv.8 | 周长与面积计算 |
+| 🧩 逻辑迷宫 | Lv.10 | 找规律填数字 |
+
+## 技术栈
+
+- **Vite + TypeScript**（原生 DOM，无框架）
+- **CSS Animations** — shake / flash / pop-in 等反馈动画
+- **Web Audio API** — 答对、答错、连击、胜利音效（懒加载，首次点击后初始化）
+- **localStorage** — 本地存储玩家进度、等级、金币、错题记录
+
+## 项目结构
+
+```
+MathGame/
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── src/
+    ├── main.ts              # 屏幕路由（navigate 函数）
+    ├── types.ts             # 共享类型定义
+    ├── store.ts             # localStorage 读写 + 岛屿配置
+    ├── audio.ts             # Web Audio 音效
+    ├── engine/
+    │   ├── questions.ts     # 六类题目生成器 + 难度分级
+    │   └── combat.ts        # HP / 连击 / 星级逻辑
+    ├── screens/
+    │   ├── home.ts          # 角色创建页
+    │   ├── map.ts           # 世界地图页
+    │   └── battle.ts        # 战斗页（含结算）
+    └── styles/
+        ├── main.css         # CSS 变量 + 全局样式
+        ├── map.css
+        └── battle.css
+```
+
+## 设计规范
+
+```css
+--color-primary:   #FFB830   /* 暖黄，主按钮 */
+--color-secondary: #4A90D9   /* 清爽蓝，次要按钮 */
+--color-bg:        #FFF9F0   /* 页面背景 */
+--color-danger:    #FF6B6B   /* 血量、错误提示 */
+--color-success:   #6BCB77   /* 答对、HP 回复 */
+```
+
+最大宽度 480px，移动端优先布局，支持触屏点击和键盘数字键输入。
